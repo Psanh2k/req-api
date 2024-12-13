@@ -19,8 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (ValidationException $exception, $request) {
             if ($request->is('api/*')) {
                 return response()->json([
-                    'message' => 'Validation Failed',
-                    'errors' => $exception->errors(),
+                    'status' => false,
+                    'message' => $exception->errors(),
                 ], $exception->status);
             }
 

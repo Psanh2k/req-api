@@ -2,25 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
         if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return $this->errorResponse([
+                'message' => 'Unauthorized',
+            ], Response::HTTP_UNAUTHORIZED);
         }
+
         $user = Auth::user();
         $token = $user->createToken('authToken')->accessToken;
 
-        return response()->json([
+        return $this->successResponse([
             'token' => $token,
             'user' => $user,
         ]);
